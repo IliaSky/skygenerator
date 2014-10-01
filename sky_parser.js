@@ -1,7 +1,7 @@
 //==================================================
-// 
-//                  Sky Parser 1.0 - an HTML generator inspired by Emmet
-//                                                   Made by IliaSky 
+//
+//                  Sky Parser 1.1 - an HTML generator inspired by Emmet
+//                                                   Made by IliaSky
 //	                 skysite.free.bg     www.github.com/IliaSky     si1.free.bg
 //
 //==================================================
@@ -31,32 +31,32 @@
 	// a(href:#)[click me] + input(type: number, value: 5)
 // outer-tag > inner-tag      outer{ inner + inner }
 	// section{ h1[title] + atricle[content] }
-// $var = inserts variable from current data object
-// $(var){markup} = changes current object to object.var inside the brackets
+// @var = inserts variable from current data object
+// @(var){markup} = changes current object to object.var inside the brackets
 // *markup = repeats the markup for each element in the current object (array)
 
 
 // Real world example patterns
 
-/* 
+/*
 S.CONST = {
-	ID : "data-id:$id",
+	ID : "data-id:@id",
 	RENT_RETURN : "div.rent-return > button.return-movie($.ID)[Return]+button.rent-movie($.ID)[Rent]",
 
-	STORE : "a.store(href:#info/$id)[$title]",
-	CATEGORY : "a.category(href:#category-info/$id,title:$name)[$name]",
-	ACTOR : "a.actor(href:#actor-info/$id,title:$firstName_$lastName)[$firstName $lastName]",
-	MOVIE : "h1{a.movie(href:#movie-info/$id)[$title]} + span.date[from $publishDate] +$.RENT_RETURN +article[$description]",
+	STORE : "a.store(href:#info/@id)[@title]",
+	CATEGORY : "a.category(href:#category-info/@id,title:@name)[@name]",
+	ACTOR : "a.actor(href:#actor-info/@id,title:@firstName_@lastName)[@firstName @lastName]",
+	MOVIE : "h1{a.movie(href:#movie-info/@id)[@title]} + span.date[from @publishDate] +$.RENT_RETURN +article[@description]",
 
 	STORES : "section#stores > h1[Stores] + nav > *$.STORE",
 	CATEGORIES : "section#categories > h1[Categories] + nav > *$.CATEGORY",
 	ACTORS : "section#actors > h1[Actors] + nav> *$.ACTOR",
 	MOVIES : "ul#movies > *li > section > $.MOVIE",
 
-	STORE_INFO : "section#store-info > h1{$.STORE} + $(movies){$.MOVIES}",
-	CATEGORY_INFO : "section#category-info > h1{$.CATEGORY} + $(movies){$.MOVIES}",
-	ACTOR_INFO : "section#actor-info > h1{$.ACTOR} + $(movies){$.MOVIES}",
-	MOVIE_INFO : "div#movie-info >  $(actors){$.ACTORS} + section#movie-basic-info{$.MOVIE}+ $(categories){$.CATEGORIES} + $(stores){$.STORES}",
+	STORE_INFO : "section#store-info > h1{$.STORE} + @(movies){$.MOVIES}",
+	CATEGORY_INFO : "section#category-info > h1{$.CATEGORY} + @(movies){$.MOVIES}",
+	ACTOR_INFO : "section#actor-info > h1{$.ACTOR} + @(movies){$.MOVIES}",
+	MOVIE_INFO : "div#movie-info >  @(actors){$.ACTORS} + section#movie-basic-info{$.MOVIE}+ $(categories){$.CATEGORIES} + @(stores){$.STORES}",
 
 	USERNAME: "label(for:username)[Username]+input#username(type:text,required)",
 	PASSWORD: "label(for:password)[Password]+input#password(type:password,required)",
@@ -77,15 +77,15 @@ var S = {};
 S.CONST = {};
 
 S.REGEX = {
-	SIMPLE_SELECTOR : '([\\-_a-z0-9.#(:/,)$]*)',
-	INNER_ELEMENTS : '(?:\\{([-_a-z0-9.#(:,)$\\[\\] +*{}/]*)\\})?',
-	TEXT_NODE : '(?:\\[([-_a-z0-9$ ]*)\\])?',
+	SIMPLE_SELECTOR : '([\\-_a-z0-9@.#(:/,)$]*)',
+	INNER_ELEMENTS : '(?:\\{([-_a-z0-9.#(:,)@$\\[\\] +*{}/]*)\\})?',
+	TEXT_NODE : '(?:\\[([-_a-z0-9@$ ]*)\\])?',
 	SELECTOR_AND_CONTENT : function(){ return S.REGEX.SIMPLE_SELECTOR + S.REGEX.TEXT_NODE + S.REGEX.INNER_ELEMENTS; },
 
 	TAG    : '^([-_a-z0-9$]*)',
 	ID      : '(?:#([-_a-z0-9$]*))?',
 	CLASS : '([-._a-z0-9$]*)',
-	ATTR  : '(?:\\(([-_a-z0-9$:,#/]*)\\))?',
+	ATTR  : '(?:\\(([-_a-z0-9@$:,#/]*)\\))?',
 	SELECTOR: function(){ return this.TAG + S.REGEX.ID + S.REGEX.CLASS + S.REGEX.ATTR; }
 };
 
@@ -121,8 +121,8 @@ S.parse = function (str, obj){
 			return S.parse(str.substr(0,i), obj) + S.parse(str.substr(i+1), obj);
 	}
 
-	// Change current object to object.innerObject when $(innerObject){}
-	var m = str.match(/^\$\(([_a-z]+)\)\{(.*)\}/i);
+	// Change current object to object.innerObject when @(innerObject){}
+	var m = str.match(/^@\(([_a-z]+)\)\{(.*)\}/i);
 	if (m)
 		return S.parse(m[2],obj[m[1]]);
 
@@ -132,12 +132,12 @@ S.parse = function (str, obj){
 	var text     = (m[2] || '') + (m[3] ? S.parse(m[3], obj) : '');
 	value = S.wrap(text, selector);
 
-	// change $var with object.var
+	// change @var with object.var
 	for (i in obj)
-		value = value.replace(RegExp('\\$'+i,'gi'), obj[i]);
+		value = value.replace(RegExp('@'+i,'gi'), obj[i]);
 
-	// change $$ with object
-	value = value.replace(/\$\$/gi, obj);
+	// change @@ with object
+	value = value.replace(/@@/gi, obj);
 	return value;
 };
 
@@ -152,14 +152,17 @@ S.wrap = function (html, selector){
 	// set href of anchor tag to # if missing
 	var attrNames = attr.map(function(kv){ return kv[0] });
 	if (tag == 'a' && attrNames.indexOf('href') == -1)
-		attr.push(['href','#'])
+		attr.push(['href','#']);
 
 	// return text node if there is no selector
 	if (tag == "" && id == "" && klass == "")
 		return html;
 
+	// make div the default tag
+	tag = tag || 'div';
+
 	// create text of opening tag
-	var text = (tag || 'div') + S.attr('id',id) + S.attr('class',klass) + S.multipleAttributes(attr);
+	var text = tag + S.attr('id',id) + S.attr('class',klass) + S.multipleAttributes(attr);
 
 	// create self closing tag
 	var SELF_CLOSING_TAGS = "area base br col hr img input link meta param command keygen source".split(' ');
