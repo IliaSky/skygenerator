@@ -15,7 +15,7 @@
 //
 // Config:
 //   SG.VIEWS -> your views (patterns or templates)
-//   SG.FLAGS -> flags allow minor conditional logic inside the
+//   SG.FLAGS -> flags allow minor conditional logic inside the templates
 //   SG.FILTERS ->
 //     you can apply them when interpolating attributes and switching objects
 //       by default: 'default' is used when interpolating object attributes
