@@ -1,0 +1,58 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+	<title>Sky Parser</title>
+	<style type="text/css">
+		body{font-family:sans-serif;background-color:#333;color:#ddd;}
+		h1, h2{text-shadow:2px 2px #000;text-align:center}
+		#container{margin:20px auto;max-width:800px;}
+		dd:before{content:" => ";color:lime;margin-left:50px;}
+		li,dt{margin:10px}
+		code{font-size:16px;padding:3px 8px;background:rgba(0,0,0,0.5);display:inline-block;border-radius:10px}
+	</style>
+</head>
+<body>
+<div id="container"></div>
+<script type="text/javascript" src="sky_parser.js"></script>
+<script type="text/javascript">
+	var data = {
+		variable_explanations:[
+			{code: "$.CONST", explanation: "inserts model from S.CONST"},
+			{code: "$var", explanation: "inserts variable from current data object"},
+			{code: "$(var){markup}", explanation: "changes current object to object.var inside the brackets"},
+			{code: "*markup", explanation: "repeats the markup for each element in the current object (array)"}
+		],
+		syntax_examples:[
+			{	code: "tag#id.class",
+				more:[{code: "#this.will.be.a.div.if.there.is.no.tag"}]},
+			{	code: "tag + tag", more:[{code:"label + input"}]},
+			{	code: "element[text without html elements]",
+				more:[
+					{code: "span[This content will be displayed in a span tag]"},
+					{code: "note[text inside square brackets is the only place where space matters - all other spaces are trimmed]"},
+					{code: "[if tag, id and class are all missing then the text will be in a text node]"}]},
+			{	code: "tag(attr:val, attr:val)",
+				more: [{code: "a(href:#)[click me] + input(type: number, value: 5)"}]},
+			{	code: "outer-tag > inner-tag",
+				more: [
+					{code:"[is the same as]"},
+					{code:"outer{ inner + inner }"},
+					{code: "section{ h1[title]      +       atricle[never mind the spaces] }"}
+				]
+			}
+		]
+	};
+	
+	
+	S.CONST = {
+		HEADINGS: "hgroup{ h1[Welcome to the demo] + h2[Here are some examples]}",
+		CODE: "code[$code]",
+		VARIABLES: "section#variables > dl > *dt{$.CODE} + dd > span.explanation[$explanation]",
+		EXAMPLES: "section#examples > ul > *li.example >  $.CODE + $(more){ ul > *li > $.CODE }",
+		PATTERN: "$.HEADINGS + $(variable_explanations){$.VARIABLES} + $(syntax_examples){$.EXAMPLES}"
+	};
+	
+	document.getElementById("container").innerHTML = S.parse("$.PATTERN", data);
+</script>
+</body>
+</html>
