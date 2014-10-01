@@ -3,12 +3,13 @@
 <head>
 	<title>Sky Parser</title>
 	<style type="text/css">
-		body{font-family:sans-serif;background-color:#333;color:#ddd;}
-		h1, h2{text-shadow:2px 2px #000;text-align:center}
+		body {font-family:sans-serif;background-color:#333;color:#ddd;}
+		h1, h2 {text-shadow:2px 2px #000;text-align:center}
 		#container{margin:20px auto;max-width:800px;}
-		dd:before{content:" => ";color:lime;margin-left:50px;}
+		dd:before {content:" => ";color:lime;margin-left:50px;}
 		li,dt{margin:10px}
-		code{font-size:16px;padding:3px 8px;background:rgba(0,0,0,0.5);display:inline-block;border-radius:10px}
+		code {font-size:16px;padding:3px 8px;background:rgba(0,0,0,0.5);display:inline-block;border-radius:10px}
+		pre {margin: 0; white-space: pre-wrap;}
 	</style>
 </head>
 <body>
@@ -19,6 +20,7 @@
 		variable_explanations:[
 			{code: "$.VIEW", explanation: "inserts view pattern from S.VIEWS"},
 			{code: "@var", explanation: "inserts variable from current data object"},
+			{code: "@@", explanation: "inserts the value of the current object"},
 			{code: "@(var){markup}", explanation: "changes current object to object.var inside the brackets"},
 			{code: "?(flag){markup}", explanation: "renders markup if flag is on"},
 			{code: "*markup", explanation: "repeats the markup for each element in the current object (array)"}
