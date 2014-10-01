@@ -216,8 +216,11 @@ SG.wrap = function (html, selector){
 
   var tag = m[1];
   var id = m[2];
-  var klass = m[3].slice(1).split('.').join(' ');
-  var attributes = (m[4] || '').split(',').map(function(kv){ return kv.split(':'); });
+  var klass = m[3].slice(1).replace(/\./g, ' ');
+  var attributes = (m[4] || '').split(',').map(function(kv){
+    var i = kv.indexOf(':');
+    return [kv.slice(0, i), kv.slice(i + 1)];
+  });
 
   // set href of anchor tag to # if missing
   var attrNames = attributes.map(function(kv){ return kv[0]; });
