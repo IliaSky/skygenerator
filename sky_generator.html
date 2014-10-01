@@ -13,13 +13,14 @@
 </head>
 <body>
 <div id="container"></div>
-<script type="text/javascript" src="sky_parser.js"></script>
+<script type="text/javascript" src="sky_generator.js"></script>
 <script type="text/javascript">
 	var data = {
 		variable_explanations:[
-			{code: "$.CONST", explanation: "inserts model from S.CONST"},
-			{code: "$var", explanation: "inserts variable from current data object"},
-			{code: "$(var){markup}", explanation: "changes current object to object.var inside the brackets"},
+			{code: "$.VIEW", explanation: "inserts view pattern from S.VIEWS"},
+			{code: "@var", explanation: "inserts variable from current data object"},
+			{code: "@(var){markup}", explanation: "changes current object to object.var inside the brackets"},
+			{code: "?(flag){markup}", explanation: "renders markup if flag is on"},
 			{code: "*markup", explanation: "repeats the markup for each element in the current object (array)"}
 		],
 		syntax_examples:[
@@ -42,17 +43,17 @@
 			}
 		]
 	};
-	
-	
-	S.CONST = {
+
+
+	SG.VIEWS = {
 		HEADINGS: "hgroup{ h1[Welcome to the demo] + h2[Here are some examples]}",
-		CODE: "code[$code]",
-		VARIABLES: "section#variables > dl > *dt{$.CODE} + dd > span.explanation[$explanation]",
-		EXAMPLES: "section#examples > ul > *li.example >  $.CODE + $(more){ ul > *li > $.CODE }",
-		PATTERN: "$.HEADINGS + $(variable_explanations){$.VARIABLES} + $(syntax_examples){$.EXAMPLES}"
+		CODE: "pre > code[@code]",
+		VARIABLES: "section#variables > dl > *dt{$.CODE} + dd > span.explanation[@explanation]",
+		EXAMPLES: "section#examples > ul > *li.example >  $.CODE + @(more){ ul > *li > $.CODE }",
+		PATTERN: "$.HEADINGS + @(variable_explanations){$.VARIABLES} + @(syntax_examples){$.EXAMPLES}"
 	};
-	
-	document.getElementById("container").innerHTML = S.parse("$.PATTERN", data);
+
+	document.getElementById("container").innerHTML = SG("$.PATTERN", data);
 </script>
 </body>
 </html>
