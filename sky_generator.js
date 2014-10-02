@@ -1,9 +1,9 @@
 //============================================================================
-//
+/*
 //            Sky Generator 1.3 - an HTML generator inspired by Emmet
-//                             Made by IliaSky
-//              iliasky.com                       github.com/IliaSky
-//
+//              Copyright (c) 2014, Ilia Yatchev (MIT Licensed)
+//                  https://github.com/IliaSky/skygenerator
+*/
 //============================================================================
 //
 //                           USAGE INSTRUCTIONS
