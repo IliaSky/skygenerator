@@ -90,3 +90,11 @@ Todo
 
 ## Issues
 * trying to add invalid symbols in selectors with data object
+
+License
+------------------------------------------------------------------------------
+MIT License
+
+Copyright (c) 2014, Ilia Yatchev (IliaSky)
+
+See LICENSE for more info.
